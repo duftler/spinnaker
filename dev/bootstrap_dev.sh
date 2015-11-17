@@ -218,16 +218,6 @@ EOF
 }
 
 
-function print_run_book_reference() {
-cat <<EOF
-
-For more help, see the Spinnaker Build & Run Book:
-  https://docs.google.com/document/d/1Q_ah8eG3Imyw-RWS1DSp_ItM2pyn56QEepCeaOAPaKA
-
-EOF
-}
-
-
 # The /bogus prefix here is because eval seems to make $0 -bash,
 # which basename thinks are flags. So since basename ignores the
 # leading path, we'll just add a bogus one in.
@@ -236,8 +226,6 @@ if [[ "$(basename '/bogus/$0')" == "bootstrap_dev.sh" ]]; then
 else
   print_source_instructions
 fi
-
-print_run_book_reference
 
 # Let path changes take effect in calling shell (if we source'd this)
 exec bash -l
