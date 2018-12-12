@@ -488,14 +488,11 @@ class BakeAndDeployTestScenario(sk.SpinnakerTestScenario):
     disable_stage = self.make_disable_group_stage(
       cloudProvider='gce', regions=[self.bindings['TEST_GCE_REGION']])
     destroy_stage = self.make_destroy_group_stage(
-      cloudProvider='gce', requisiteStages=[])
-      # TODO(duftler): Add back disable stage after resolving flakiness in disable stage completion during tests.
-      # cloudProvider='gce', requisiteStages=['DISABLE'])
+      cloudProvider='gce', requisiteStages=['DISABLE'])
 
     pipeline_spec = dict(
       name=name,
-      # stages=[disable_stage, destroy_stage],
-      stages=[destroy_stage],
+      stages=[disable_stage, destroy_stage],
       application=self.TEST_APP,
       stageCounter=2,
       parallel=True,
@@ -619,8 +616,7 @@ class BakeAndDeployTestScenario(sk.SpinnakerTestScenario):
             status_class=gate.GatePipelineStatus,
             status_path=path,
             max_wait_secs=1080), # Allow 18 mins to bake and deploy.
-        contract=builder.build(),
-        cleanup=self.delete_baked_image)
+        contract=builder.build())
 
   def run_disable_and_destroy_google_pipeline(self, pipeline_id):
     path = 'pipelines/{app}/{id}'.format(app=self.TEST_APP,
@@ -640,7 +636,8 @@ class BakeAndDeployTestScenario(sk.SpinnakerTestScenario):
             data='',
             path=path,
             max_wait_secs=1080), # Allow 18 mins to disable and destroy.
-        contract=jc.Contract())
+        contract=jc.Contract(),
+        cleanup=self.delete_baked_image)
 
   def new_jenkins_build_operation(self):
     return None
